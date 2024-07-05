@@ -9,7 +9,6 @@ import me.nurfajar.dto.request.UpdateUserRequestDTO;
 import me.nurfajar.model.Role;
 import me.nurfajar.model.UserModel;
 import me.nurfajar.repository.UserRepository;
-import net.bytebuddy.implementation.bytecode.Throw;
 
 
 import java.time.LocalDate;

@@ -1,7 +1,6 @@
 package me.nurfajar.dto;
 
 import me.nurfajar.dto.request.CreateUserRequestDTO;
-import me.nurfajar.dto.request.UpdateUserRequestDTO;
 import me.nurfajar.model.UserModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
