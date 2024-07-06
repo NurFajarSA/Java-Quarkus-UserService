@@ -9,7 +9,6 @@ import me.nurfajar.dto.request.RegisterUserRequestDTO;
 import me.nurfajar.dto.request.LoginUserRequestDTO;
 import me.nurfajar.dto.response.BaseResponse;
 import me.nurfajar.model.UserModel;
-import me.nurfajar.security.JwtUtils;
 import me.nurfajar.service.AuthService;
 import me.nurfajar.service.UserService;
 
@@ -24,9 +23,6 @@ public class AuthController {
 
     @Inject
     AuthService authService;
-
-    @Inject
-    JwtUtils jwtUtils;
 
     @POST
     @Path("/register")
@@ -76,20 +72,4 @@ public class AuthController {
             ).build();
         }
     }
-
-    @GET
-    @Path("/claims/{token}")
-    public Response getClaims(@PathParam("token") String token) {
-        try {
-            UserModel user = jwtUtils.parseToken(token);
-            return Response.ok(
-                    new BaseResponse<>("Success get claims", user)
-            ).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    new BaseResponse<>(e.getMessage(), null)
-            ).build();
-        }
-    }
-
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE user_table SET is_deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE usermodel SET is_deleted = true WHERE id=?")
 @Where(clause = "is_deleted = false")
 public class UserModel extends PanacheEntityBase {
     @Id

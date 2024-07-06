@@ -42,8 +42,6 @@ public class JwtUtils {
                 .sign();
     }
 
-
-
     public UserModel parseToken(String token) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
         PublicKey publicKey = readPublicKey("public_key.pem");
         JsonWebToken jwt = jwtParser.verify(token, publicKey);
