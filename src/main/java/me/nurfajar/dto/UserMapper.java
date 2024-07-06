@@ -1,6 +1,6 @@
 package me.nurfajar.dto;
 
-import me.nurfajar.dto.request.CreateUserRequestDTO;
+import me.nurfajar.dto.request.RegisterUserRequestDTO;
 import me.nurfajar.model.UserModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,5 +13,5 @@ public interface UserMapper {
     @Mapping(target = "dateUpdate", ignore = true)
     @Mapping(target = "lastLogin", ignore = true)
     @Mapping(target = "loginAttempt", ignore = true)
-    UserModel toUserModel(CreateUserRequestDTO createUserRequestDTO);
+    UserModel toUserModel(RegisterUserRequestDTO registerUserRequestDTO);
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserRequestDTO extends CreateUserRequestDTO {
+public class UpdateUserRequestDTO extends RegisterUserRequestDTO {
     @NotEmpty
     private String id;
 }

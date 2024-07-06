@@ -1,18 +1,22 @@
 package me.nurfajar.model;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-public class UserModel {
+@NoArgsConstructor
+@SQLDelete(sql = "UPDATE user_table SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted = false")
+public class UserModel extends PanacheEntityBase {
     @Id
     private UUID id = UUID.randomUUID();
 
@@ -29,15 +33,27 @@ public class UserModel {
     @Column
     private Role role;
 
-    @Column
-    private LocalDate dateCreate = LocalDate.now();
+    @Column(name = "date_create")
+    private LocalDateTime dateCreate = LocalDateTime.now();
 
-    @Column
-    private LocalDate dateUpdate = LocalDate.now();
+    @Column(name = "date_update")
+    private LocalDateTime dateUpdate = LocalDateTime.now();
 
-    @Column
-    private LocalDate lastLogin;
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
-    @Column
+    @Column(name = "login_attempt")
     private int loginAttempt = 0;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
+    public static UserModel findByEmail(String email) {
+        return find("email", email).firstResult();
+    }
+
+    public static UserModel findByUsername(String username) {
+        return find("username", username).firstResult();
+    }
+
 }

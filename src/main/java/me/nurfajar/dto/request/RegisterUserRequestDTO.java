@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserRequestDTO {
+public class RegisterUserRequestDTO {
     @Pattern(regexp = "^(.+)@(.+)$", message = "Email must be valid")
     private String email;
 
