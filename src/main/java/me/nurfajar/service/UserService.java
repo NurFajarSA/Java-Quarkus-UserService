@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import me.nurfajar.dto.UserMapper;
 import me.nurfajar.dto.request.RegisterUserRequestDTO;
+import me.nurfajar.dto.request.UpdatePasswordRequestDTO;
 import me.nurfajar.dto.request.UpdateUserRequestDTO;
 import me.nurfajar.model.Role;
 import me.nurfajar.model.UserModel;
@@ -48,13 +49,16 @@ public class UserService {
     }
 
     @Transactional
-    public UserModel updatePassword(UUID id, String password) {
-        UserModel existingUser = UserModel.findById(id);
+    public UserModel updatePassword(UpdatePasswordRequestDTO request) {
+        UserModel existingUser = UserModel.findById(UUID.fromString(request.getId()));
         if (existingUser != null) {
-            existingUser.setPassword(password);
-            existingUser.setDateUpdate(LocalDateTime.now());
-            UserModel.persist(existingUser);
-            return existingUser;
+            if (existingUser.getPassword().equals(request.getOldPassword())) {
+                existingUser.setPassword(request.getOldPassword());
+                existingUser.setDateUpdate(LocalDateTime.now());
+                UserModel.persist(existingUser);
+                return existingUser;
+            }
+            throw new RuntimeException("Old password is incorrect");
         }
         throw new RuntimeException("User not found");
     }
