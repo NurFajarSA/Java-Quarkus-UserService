@@ -98,7 +98,7 @@ public class UserController {
                         new BaseResponse<>("Unauthorized", null)
                 ).build();
             }
-            UserResponse updatedUser = userService.updatePassword(request);
+            userService.updatePassword(request);
             return Response.ok().entity(new BaseResponse<>("Password updated", null)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(

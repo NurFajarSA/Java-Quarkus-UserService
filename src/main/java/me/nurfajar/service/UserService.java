@@ -52,14 +52,15 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updatePassword(UpdatePasswordRequestDTO request) {
+    public void updatePassword(UpdatePasswordRequestDTO request) {
         UserModel existingUser = UserModel.findById(UUID.fromString(request.getId()));
         if (existingUser != null) {
             if (BcryptUtil.matches(request.getOldPassword(), existingUser.getPassword())) {
                 existingUser.setPassword(BcryptUtil.bcryptHash(request.getNewPassword()));
                 existingUser.setDateUpdate(LocalDateTime.now());
                 UserModel.persist(existingUser);
-                return userMapper.toUserResponse(existingUser);
+                userMapper.toUserResponse(existingUser);
+                return;
             }
             throw new RuntimeException("Old password is incorrect");
         }
