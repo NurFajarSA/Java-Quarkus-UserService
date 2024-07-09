@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import me.nurfajar.dto.request.UpdatePasswordRequestDTO;
 import me.nurfajar.dto.request.UpdateUserRequestDTO;
 import me.nurfajar.dto.response.BaseResponse;
 import me.nurfajar.model.Role;
@@ -77,13 +78,25 @@ public class UserController {
                 ).build();
             }
             UserModel updatedUser = userService.updateUser(request);
-            if (updatedUser != null) {
-                return Response.ok(updatedUser).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity(
-                        new BaseResponse<>("User not found", null)
+            return Response.ok(updatedUser).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    new BaseResponse<>(e.getMessage(), null)
+            ).build();
+        }
+    }
+
+    @PUT
+    @RolesAllowed({"ADMIN", "USER"})
+    public Response updatePassword(UpdatePasswordRequestDTO request, @HeaderParam("Authorization") String token) {
+        try {
+            if (!isAuthorized(UUID.fromString(request.getId()), token)) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity(
+                        new BaseResponse<>("Unauthorized", null)
                 ).build();
             }
+            UserModel updatedUser = userService.updatePassword(request);
+            return Response.ok(updatedUser).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     new BaseResponse<>(e.getMessage(), null)

@@ -56,4 +56,9 @@ public class UserModel extends PanacheEntityBase {
         return find("username", username).firstResult();
     }
 
+    public static long totalLoginAttempt() {
+        Long totalLoginAttempts = Long.parseLong(find("select sum(loginAttempt) from UserModel").firstResult().toString());
+        return totalLoginAttempts != null ? totalLoginAttempts : 0;
+    }
+
 }

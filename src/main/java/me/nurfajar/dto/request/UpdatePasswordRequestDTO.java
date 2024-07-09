@@ -1,6 +1,5 @@
 package me.nurfajar.dto.request;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserRequestDTO {
-    @NotEmpty
+public class UpdatePasswordRequestDTO {
     private String id;
-
-    @NotEmpty
-    private String username;
+    private String oldPassword;
+    private String newPassword;
 }

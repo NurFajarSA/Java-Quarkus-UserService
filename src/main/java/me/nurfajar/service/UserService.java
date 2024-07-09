@@ -40,9 +40,18 @@ public class UserService {
         UserModel existingUser = UserModel.findById(UUID.fromString(request.getId()));
         if (existingUser != null) {
             existingUser.setUsername(request.getUsername());
-            existingUser.setEmail(request.getEmail());
-            existingUser.setPassword(request.getPassword());
-            existingUser.setRole(Role.valueOf(request.getRole()));
+            existingUser.setDateUpdate(LocalDateTime.now());
+            UserModel.persist(existingUser);
+            return existingUser;
+        }
+        throw new RuntimeException("User not found");
+    }
+
+    @Transactional
+    public UserModel updatePassword(UUID id, String password) {
+        UserModel existingUser = UserModel.findById(id);
+        if (existingUser != null) {
+            existingUser.setPassword(password);
             existingUser.setDateUpdate(LocalDateTime.now());
             UserModel.persist(existingUser);
             return existingUser;
@@ -71,5 +80,17 @@ public class UserService {
 
     public UserModel getUserByUsername(String username) {
         return UserModel.findByUsername(username);
+    }
+
+    public long getTotalUser() {
+        return UserModel.count("role", Role.USER);
+    }
+
+    public long getTotalAdmin() {
+        return UserModel.count("role", Role.ADMIN);
+    }
+
+    public long getTotalLoginAttempt() {
+        return UserModel.totalLoginAttempt();
     }
 }
