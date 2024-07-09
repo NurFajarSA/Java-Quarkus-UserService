@@ -1,5 +1,6 @@
 package me.nurfajar.service;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -7,6 +8,7 @@ import me.nurfajar.dto.UserMapper;
 import me.nurfajar.dto.request.RegisterUserRequestDTO;
 import me.nurfajar.dto.request.UpdatePasswordRequestDTO;
 import me.nurfajar.dto.request.UpdateUserRequestDTO;
+import me.nurfajar.dto.response.UserResponse;
 import me.nurfajar.model.Role;
 import me.nurfajar.model.UserModel;
 
@@ -21,42 +23,43 @@ public class UserService {
     @Inject
     UserMapper userMapper;
 
-    public List<UserModel> listAllUsers() {
-        return UserModel.listAll();
+    public List<UserResponse> listAllUsers() {
+        return userMapper.toUserResponseList(UserModel.listAll());
     }
 
-    public UserModel getUserById(UUID id) {
-        return UserModel.findById(id);
+    public UserResponse getUserById(UUID id) {
+        return userMapper.toUserResponse(UserModel.findById(id));
     }
 
     @Transactional
-    public UserModel createUser(RegisterUserRequestDTO request) {
+    public UserResponse createUser(RegisterUserRequestDTO request) {
         UserModel user = userMapper.toUserModel(request);
+        user.setPassword(BcryptUtil.bcryptHash(request.getPassword()));
         UserModel.persist(user);
-        return user;
+        return userMapper.toUserResponse(user);
     }
 
     @Transactional
-    public UserModel updateUser(UpdateUserRequestDTO request) {
+    public UserResponse updateUser(UpdateUserRequestDTO request) {
         UserModel existingUser = UserModel.findById(UUID.fromString(request.getId()));
         if (existingUser != null) {
             existingUser.setUsername(request.getUsername());
             existingUser.setDateUpdate(LocalDateTime.now());
             UserModel.persist(existingUser);
-            return existingUser;
+            return userMapper.toUserResponse(existingUser);
         }
         throw new RuntimeException("User not found");
     }
 
     @Transactional
-    public UserModel updatePassword(UpdatePasswordRequestDTO request) {
+    public UserResponse updatePassword(UpdatePasswordRequestDTO request) {
         UserModel existingUser = UserModel.findById(UUID.fromString(request.getId()));
         if (existingUser != null) {
-            if (existingUser.getPassword().equals(request.getOldPassword())) {
-                existingUser.setPassword(request.getOldPassword());
+            if (BcryptUtil.matches(request.getOldPassword(), existingUser.getPassword())) {
+                existingUser.setPassword(BcryptUtil.bcryptHash(request.getNewPassword()));
                 existingUser.setDateUpdate(LocalDateTime.now());
                 UserModel.persist(existingUser);
-                return existingUser;
+                return userMapper.toUserResponse(existingUser);
             }
             throw new RuntimeException("Old password is incorrect");
         }
@@ -82,10 +85,6 @@ public class UserService {
         return UserModel.findByEmail(email);
     }
 
-    public UserModel getUserByUsername(String username) {
-        return UserModel.findByUsername(username);
-    }
-
     public long getTotalUser() {
         return UserModel.count("role", Role.USER);
     }
@@ -96,5 +95,11 @@ public class UserService {
 
     public long getTotalLoginAttempt() {
         return UserModel.totalLoginAttempt();
+    }
+
+    public boolean checkPassword(UUID userId, String password) {
+        UserModel user = UserModel.findById(userId);
+        String passwordHash = user.getPassword();
+        return BcryptUtil.matches(password, passwordHash);
     }
 }

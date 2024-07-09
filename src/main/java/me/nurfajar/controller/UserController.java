@@ -3,12 +3,14 @@ package me.nurfajar.controller;
 import io.smallrye.jwt.auth.principal.ParseException;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import me.nurfajar.dto.request.UpdatePasswordRequestDTO;
 import me.nurfajar.dto.request.UpdateUserRequestDTO;
 import me.nurfajar.dto.response.BaseResponse;
+import me.nurfajar.dto.response.UserResponse;
 import me.nurfajar.model.Role;
 import me.nurfajar.model.UserModel;
 import me.nurfajar.security.JwtUtils;
@@ -54,13 +56,13 @@ public class UserController {
                         new BaseResponse<>("Unauthorized", null)
                 ).build();
             }
-            UserModel user = userService.getUserById(id);
+            UserResponse user = userService.getUserById(id);
             if (user == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(
                         new BaseResponse<>("User not found", null)
                 ).build();
             }
-            return Response.ok(user).build();
+            return Response.ok(new BaseResponse<>("Success get user", user)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     new BaseResponse<>(e.getMessage(), null)
@@ -70,15 +72,15 @@ public class UserController {
 
     @PUT
     @RolesAllowed({"ADMIN", "USER"})
-    public Response updateUser(UpdateUserRequestDTO request, @HeaderParam("Authorization") String token) {
+    public Response updateUser(@Valid UpdateUserRequestDTO request, @HeaderParam("Authorization") String token) {
         try {
             if (!isAuthorized(UUID.fromString(request.getId()), token)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity(
                         new BaseResponse<>("Unauthorized", null)
                 ).build();
             }
-            UserModel updatedUser = userService.updateUser(request);
-            return Response.ok(updatedUser).build();
+            UserResponse updatedUser = userService.updateUser(request);
+            return Response.ok( new BaseResponse<>("User updated", updatedUser)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     new BaseResponse<>(e.getMessage(), null)
@@ -87,16 +89,17 @@ public class UserController {
     }
 
     @PUT
+    @Path("/change-password")
     @RolesAllowed({"ADMIN", "USER"})
-    public Response updatePassword(UpdatePasswordRequestDTO request, @HeaderParam("Authorization") String token) {
+    public Response updatePassword(@Valid UpdatePasswordRequestDTO request, @HeaderParam("Authorization") String token) {
         try {
             if (!isAuthorized(UUID.fromString(request.getId()), token)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity(
                         new BaseResponse<>("Unauthorized", null)
                 ).build();
             }
-            UserModel updatedUser = userService.updatePassword(request);
-            return Response.ok(updatedUser).build();
+            UserResponse updatedUser = userService.updatePassword(request);
+            return Response.ok().entity(new BaseResponse<>("Password updated", null)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     new BaseResponse<>(e.getMessage(), null)

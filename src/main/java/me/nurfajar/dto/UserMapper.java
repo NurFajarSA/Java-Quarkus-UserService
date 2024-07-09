@@ -1,9 +1,13 @@
 package me.nurfajar.dto;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import me.nurfajar.dto.request.RegisterUserRequestDTO;
+import me.nurfajar.dto.response.UserResponse;
 import me.nurfajar.model.UserModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "jakarta")
 public interface UserMapper {
@@ -14,4 +18,8 @@ public interface UserMapper {
     @Mapping(target = "lastLogin", ignore = true)
     @Mapping(target = "loginAttempt", ignore = true)
     UserModel toUserModel(RegisterUserRequestDTO registerUserRequestDTO);
+
+    UserResponse toUserResponse(UserModel userModel);
+
+    List<UserResponse> toUserResponseList(List<UserModel> userModels);
 }

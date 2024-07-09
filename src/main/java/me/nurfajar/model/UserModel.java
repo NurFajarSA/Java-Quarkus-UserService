@@ -1,12 +1,16 @@
 package me.nurfajar.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.security.jpa.Password;
+import io.quarkus.security.jpa.Roles;
+import io.quarkus.security.jpa.Username;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +18,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE usermodel SET is_deleted = true WHERE id=?")
+@Table(name = "user_table")
+@SQLDelete(sql = "UPDATE user_table SET is_deleted = true WHERE id=?")
 @Where(clause = "is_deleted = false")
 public class UserModel extends PanacheEntityBase {
     @Id
@@ -23,14 +28,14 @@ public class UserModel extends PanacheEntityBase {
     @Column(unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Username
     private String username;
 
-    @Column
+    @Password
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column
+    @Roles
     private Role role;
 
     @Column(name = "date_create")
@@ -57,7 +62,7 @@ public class UserModel extends PanacheEntityBase {
     }
 
     public static long totalLoginAttempt() {
-        Long totalLoginAttempts = Long.parseLong(find("select sum(loginAttempt) from UserModel").firstResult().toString());
+        Long totalLoginAttempts = find("select sum(loginAttempt) from UserModel").project(Long.class).firstResult();
         return totalLoginAttempts != null ? totalLoginAttempts : 0;
     }
 

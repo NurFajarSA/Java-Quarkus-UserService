@@ -20,5 +20,5 @@ public class RegisterUserRequestDTO {
     private String password;
 
     @Pattern(regexp = "^(ADMIN|USER)$", message = "Role must be ADMIN or USER")
-    private String role;
+    private String role = "USER";
 }
