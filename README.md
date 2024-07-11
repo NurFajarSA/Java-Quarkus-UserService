@@ -1,66 +1,20 @@
-# user
-
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-
-```shell script
-./gradlew quarkusDev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./gradlew build
-```
-
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/user-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Related Guides
-
-- RESTEasy Classic ([guide](https://quarkus.io/guides/resteasy)): REST endpoint framework implementing Jakarta REST and more
-
-## Provided Code
-
-### RESTEasy JAX-RS
-
-Easily start your RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+## How to Run
+1. Clone the repository
+2. Make sure that docker is running on your machine
+3. Run the following command in the terminal
+    ```bash
+    docker-compose up
+    ```
+4. After the containers are up and running, run the following command to create the database tables
+    ```bash
+    ./gradlew quarkusDev
+    ```
+5. The application is now running on http://localhost:8080
+6. You can acces the swagger documentation on http://localhost:8080/docs
+7. You can access the database with the following credentials:
+    - URL: jdbc:postgresql://localhost:15111/postgres
+    - User: postgres
+    - Password: secret99
+8. You can login with admin credentials:
+    - Email: admin@gmail.com
+    - Password: User#1234
